@@ -18,15 +18,6 @@ bot = Bot(intents=intents,command_prefix="$")
 async def on_connect():
   print("Bot Connected")
 
-@bot.command()
-async def generate(ctx, *args):
-    text = ""
-    for i in args:
-        text += i + " "
-    text = text.rstrip(text[-1])
 
-    img = diffuser_control.generate_img(text)
-
-    await ctx.send(content=f'{text}',file=discord.File(img))
 
 bot.run(TOKEN)

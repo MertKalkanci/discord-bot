@@ -1,6 +1,6 @@
 from diffusers import StableDiffusionPipeline
 from PIL import Image
-
+import torch
 
 model_id = "CompVis/stable-diffusion-v1-5"
 device = "cuda"

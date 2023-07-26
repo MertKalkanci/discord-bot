@@ -1,4 +1,4 @@
-import discord
+import nextcord as discord
 from discord.ext.commands import Bot
 import time
 import json_ops
@@ -15,7 +15,7 @@ intents.members = True
 intents.message_content = True
 intents.moderation = True
 
-bot = Bot(intents=intents,command_prefix="/")
+bot = Bot(command_prefix=".", intents=intents)
 
 @bot.event
 async def on_connect():
@@ -63,5 +63,29 @@ async def on_message(message):
   await bot.process_commands(message)
 
 #endregion
+
+
+
+@bot.command()
+async def join(ctx):
+  if not ctx.message.author.voice:
+    await ctx.send("{} is not connected to a voice channel".format(ctx.message.author.name))
+    return
+  else:
+    channel = ctx.message.author.voice.channel
+  await channel.connect()
+  vc = (discord.VoiceClient)ctx.voice_client 
+  vc.
+      
+           
+
+@bot.command()
+async def leave(ctx):
+  try:
+    await ctx.voice_client.disconnect()
+  except:
+    await ctx.send("The bot is not connected to a voice channel.")
+
+
 
 bot.run(TOKEN)

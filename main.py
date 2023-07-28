@@ -175,6 +175,14 @@ async def leave(ctx):
   except:
     await ctx.send("The bot is not connected to a voice channel.")
 
+@bot.command(name="help",help="Help Command")
+async def help(ctx):
+  embed = discord.Embed(title="Help", description="Commands for the bot",color=0x00ff00)
+  embed.set_author(name="Help")
 
+  for i in bot.commands:
+    embed.add_field(name=i.name, value=i.help, inline=False)
+  
+  await ctx.send(embed=embed)
 
 bot.run(TOKEN)

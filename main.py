@@ -74,8 +74,7 @@ async def join(ctx):
   else:
     channel = ctx.message.author.voice.channel
   await channel.connect()
-  vc = (discord.VoiceClient)ctx.voice_client 
-  vc.
+  vc = (discord.VoiceClient)ctx.voice_client
       
            
 

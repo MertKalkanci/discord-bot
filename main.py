@@ -8,7 +8,7 @@ TOKEN = open("token.txt", "r").read()
 
 lobby_creator_dict = {}
 shadow_ban_dict = {}
-shadow_ban_wait = 2.5
+shadow_ban_wait = 0.5
 
 shadow_ban_dict = json_ops.load_dict_from_json("shadow_ban_list.json")
 
@@ -28,6 +28,10 @@ async def on_connect():
 @bot.command(name="shadow_ban",help="Shadow bans a user from chat")
 async def shadow_ban(ctx: discord.message, member: discord.Member):
 
+  if ctx.message.author.guild_permissions.administrator == False:
+    await ctx.send("You do not have permission to do that!")
+    return
+
   if shadow_ban_dict.keys().__contains__(str(ctx.message.guild.id)):
     old = shadow_ban_dict[str(ctx.message.guild.id)]
   else:
@@ -45,8 +49,40 @@ async def shadow_ban(ctx: discord.message, member: discord.Member):
 
   await ctx.send(f"{member.name} has been shadow banned from chat!")
 
+@bot.command(name="shadow_ban_list",help="Lists users shadow baned from chat")
+async def shadow_ban_list(ctx):
+  
+    if ctx.message.author.guild_permissions.administrator == False:
+      await ctx.send("You do not have permission to do that!")
+      return
+  
+    if shadow_ban_dict.keys().__contains__(str(ctx.message.guild.id)):
+      shadow_ban_list = shadow_ban_dict[str(ctx.message.guild.id)]
+    else:
+      shadow_ban_list = []
+  
+    if len(shadow_ban_list) <= 0:
+      await ctx.send("No one is shadow banned!")
+      return
+  
+    embed = discord.Embed(title="Shadow Ban List", description="List of users shadow banned from chat",color=0x00ff00)
+    embed.set_author(name="Shadow Ban")
+  
+    members_list = []
+    for i in shadow_ban_list:
+      members_list.append(ctx.guild.get_member(i).mention)
+  
+    embed.add_field(name="Shadow Ban List", value=members_list, inline=False)
+  
+    await ctx.send(embed=embed)
+
 @bot.command(name="unshadow_ban",help="Unshadow bans a user from chat")
 async def unshadow_ban(ctx, member: discord.Member):
+
+  if ctx.message.author.guild_permissions.administrator == False:
+    await ctx.send("You do not have permission to do that!")
+    return
+  
   shadow_ban_dict[str(ctx.message.guild.id)].remove(member.id)
   json_ops.save_dict_to_json("shadow_ban_list.json", shadow_ban_dict)
 

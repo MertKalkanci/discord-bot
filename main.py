@@ -3,11 +3,13 @@ from discord.ext.commands import Bot
 import time
 import json_ops
 from lobby_creator import create_teams
+from server_checker import minecraft_server_checker
 
 TOKEN = open("token.txt", "r").read()
 
 lobby_creator_dict = {}
 shadow_ban_dict = {}
+minecraft_server_dict = {}
 shadow_ban_wait = 0.5
 
 shadow_ban_dict = json_ops.load_dict_from_json("shadow_ban_list.json")
@@ -17,7 +19,7 @@ intents.members = True
 intents.message_content = True
 intents.moderation = True
 
-bot = Bot(command_prefix=".", intents=intents)
+bot = Bot(command_prefix="$", intents=intents)
 
 @bot.event
 async def on_connect():
@@ -191,6 +193,40 @@ async def teams(ctx, team_number = 2):
     embed.add_field(name="Team {}".format(i + 1), value=members_list[i], inline=False)
   
   await ctx.send(embed=embed)
+
+#endregion
+
+#region minecraft_checker
+
+@bot.command(name="minecraft_status",help="Shows the status of the minecraft server")
+async def minecraft_status(ctx):
+  minecraft_server_dict = json_ops.load_dict_from_json("minecraft_server.json")
+
+  if not minecraft_server_dict.keys().__contains__(str(ctx.message.guild.id)):
+    return
+  
+  embed = discord.Embed(title="Minecraft Server Status", description="Status of the minecraft server",color=0x00ff00)
+  embed.set_author(name="Minecraft Server")
+
+  embed.add_field(name="Status",
+    value=minecraft_server_checker(minecraft_server_dict[str(ctx.message.guild.id)][0], minecraft_server_dict[str(ctx.message.guild.id)][1]),
+    inline=False)
+  
+  await ctx.send(embed=embed)
+
+@bot.command(name="minecraft_set",help="Sets the minecraft server")
+async def minecraft_set(ctx, ip, port = 25565):
+  if ctx.message.author.guild_permissions.administrator == False:
+    await ctx.send("You don't have permission to do that!")
+    return
+  
+  if not minecraft_server_dict.keys().__contains__(str(ctx.message.guild.id)):
+    minecraft_server_dict[str(ctx.message.guild.id)] = []
+    
+  minecraft_server_dict[str(ctx.message.guild.id)] = [ip, port]
+  json_ops.save_dict_to_json("minecraft_server.json", minecraft_server_dict)
+
+  await ctx.send(f"Minecraft server {ip}, with port :{port} set!")
 
 #endregion
 

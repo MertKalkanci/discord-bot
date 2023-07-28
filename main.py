@@ -10,7 +10,7 @@ lobby_creator_dict = {}
 shadow_ban_dict = {}
 shadow_ban_wait = 2.5
 
-shadow_ban_dict = json_ops.load_list_from_json("shadow_ban_list.json")
+shadow_ban_dict = json_ops.load_dict_from_json("shadow_ban_list.json")
 
 intents = discord.Intents.default()
 intents.members = True
@@ -41,14 +41,14 @@ async def shadow_ban(ctx: discord.message, member: discord.Member):
   shadow_ban_dict[str(ctx.message.guild.id)].extend(old)
   shadow_ban_dict[str(ctx.message.guild.id)].append(member.id)
 
-  json_ops.save_list_to_json("shadow_ban_list.json", shadow_ban_dict)
+  json_ops.save_dict_to_json("shadow_ban_list.json", shadow_ban_dict)
 
   await ctx.send(f"{member.name} has been shadow banned from chat!")
 
 @bot.command(name="unshadow_ban",help="Unshadow bans a user from chat")
 async def unshadow_ban(ctx, member: discord.Member):
   shadow_ban_dict[str(ctx.message.guild.id)].remove(member.id)
-  json_ops.save_list_to_json("shadow_ban_list.json", shadow_ban_dict)
+  json_ops.save_dict_to_json("shadow_ban_list.json", shadow_ban_dict)
 
   await ctx.send(f"{member.name} has been unshadow banned from chat!")
 
